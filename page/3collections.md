@@ -11,21 +11,6 @@ type: page
 
 ## 工具
 
-* [box-shadow generator](http://www.cssmatic.com/box-shadow)
-
-    生成 box-shadow 的工具。
-
-* [gradient-generator](http://www.cssmatic.com/gradient-generator)
-
-    渐变生成器。
-
-* [Ultimate CSS Gradient Generator](http://www.colorzilla.com/gradient-editor/)
-
-    也是渐变生成器
-
-* [CSS Generators -CSSREFLEX](http://www.cssreflex.com/css-generators/)
-
-    CSS3 生成器
 
 - [tiny png](https://tinypng.com/)
 
@@ -42,8 +27,13 @@ type: page
 - [在线正则表达式匹配](https://regex101.com/)
     - 这个功能更强大一点，能清楚的区分出贪婪和懒惰正则。
 - [http://regexr.com/](http://regexr.com/)
-- [google fonts](https://fonts.google.com/)
-  - [Google Fonts 加速代理](https://fengmk2.com/blog/2016/google-fonts-mirror)
+
+##  高清图获取
+* [pixabay](https://pixabay.com/zh/)
+* [wall.alpha](https://wall.alphacoders.com/finding_wallpapers.php?lang=Chinese)
+* [veer](https://www.veer.com/)
+* [freeimages](https://cn.freeimages.com/)
+* [wallhere](https://wallhere.com/)
 
 ## 编程语言
 
@@ -59,13 +49,6 @@ type: page
 
 
 
-
-
-## other articles
-
-- [<head> Cheat Sheet](http://gethead.info/)
-* [将footer固定在页面底部的实现方法](https://segmentfault.com/a/1190000004453249)
-- [HTML5 视频 By Pete LePage](https://www.html5rocks.com/zh/tutorials/video/basics/)
 
 ## 编辑器
 
@@ -135,23 +118,7 @@ Syntax Theme: Atom Dark or One Dark
 
 * [JS前端开发群月报 -豪情等人维护](http://www.kancloud.cn/jsfront/month/82796)
 
-## 交互设计相关
 
-- [Framer](https://framerjs.com/)
-
-    Design the impossible with Framer
-
-- [FLINTO](https://www.flinto.com/)
-
-    App Prototyping Tools for Designers
-
-- [Principle](http://principleformac.com/)
-
-    Animate Your Ideas, Design Better Apps
-
-- [https://gyrosco.pe/](https://gyrosco.pe/)
-
-    首页的卡片翻动效果非常赞。
 
 ## Comments
 

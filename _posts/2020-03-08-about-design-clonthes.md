@@ -33,13 +33,13 @@ http://z2-ec2.images-amazon.com/images/P/*****.01.MAIN._SCRM_.jpg
 http://s3.cn-north-1.amazonaws.com.cn/sitbweb-cn/content/*****/images/cover.jpg
 ```
 ##  电影
-[豆瓣](https://www.douban.com/)
-[askpanda](https://askpanda.cc/)
+- [豆瓣](https://www.douban.com/)
+- [askpanda](https://askpanda.cc/)
 
 ##  更多图片获取
-[pixabay](https://pixabay.com/zh/)
-[wall.alpha](https://wall.alphacoders.com/finding_wallpapers.php?lang=Chinese)
-[veer](https://www.veer.com/)
-[freeimages](https://cn.freeimages.com/)
-[wallhere](https://wallhere.com/)
+* [pixabay](https://pixabay.com/zh/)
+* [wall.alpha](https://wall.alphacoders.com/finding_wallpapers.php?lang=Chinese)
+* [veer](https://www.veer.com/)
+* [freeimages](https://cn.freeimages.com/)
+* [wallhere](https://wallhere.com/)
 
