@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "django+scrapy作品"
-date:   2020-03-09 03:09:23
+date:   2019-04-21 03:09:23
 categories: python
 tags: 作品
 ---
@@ -10,10 +10,9 @@ tags: 作品
 {:toc}
 
 在学习`django`和`scrapy`之后,楼主尝试着去结合两个框架,后来发现并没有那么容易,因为`dajngo`是同步的,而`scrapy`是异步的.是不能够相结合的.
-**效果如下**
-[video(video-9Uq9dRmJ-1583742863893)(type-bilibili)(url-https://player.bilibili.com/player.html?aid=94841063)(image-https://ss.csdn.net/p?http://i1.hdslb.com/bfs/archive/322d45381f335b5430721c75dc84a7d86a675944.jpg)(title-S90415-10391650)]
-整个项目在我的github上面，项目结构有点乱
-[cmzzGithub](https://github.com/XZHhengge/dataAnalyze)
+[b站视频演示链接](https://www.bilibili.com/video/av94841063)
+整个项目在我的[dataAnalyze](https://github.com/XZHhengge/dataAnalyze)上面，项目结构有点乱
+
 
 再寻找资料的过程中,找到一种代替的方法.就是
 把`scrapy`爬虫框架部署在[scrapyd](https://scrapyd.readthedocs.io/en/stable/)上面,`django`框架在`view`通过`requests`包动态传值,调用`scrapy`爬虫框架爬取数据然后存入数据库.然后`view`再从数据库中取出数据.(这里会有一个挺大的问题,就是`view`取数据会比`scrapy`爬取要快,就会出现前端加载完成了,但是爬虫还没爬完.这里可以让前端进行等待的方法)
