@@ -14,40 +14,167 @@ tags: 抓包、爬虫
 
 #  目标APP：易班
 #  目的：实现自动打卡
-#  失败原因：无法破解易班APP对我们学校登录的headers里面的signature和authorization，logintoken（进行过多种解码，无法获得有效信息）。利用dex2jar反编译APP无法获得全部代码。
 **下面是整个流程**
 
- 1. 手机先安装Packet Capture进行抓包。抓到如下（蓝色为send，红色为return）**图片与图片之间不一定是同一次抓包**：
- 
- 这是发出的第一个请求，这里的Host还是在易班，在对比多次的请求后，发现
- logintoken和authorization相同，也是url的一部分，变化没有找到规律，有时一个上午相同，有时下一次请求会变，一天后会变化。
- v_time为15位时间戳
- signature前面一部分不变，后面一些每一次不相同
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508080654777.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
-**第二次请求**
-还是易班的Host，其他都没变化。
-返回一个跳转到我们学校的url，还给了几个access_token,第一个yibanM_user_token为我们的logintoken.第二个yiban_user_token未知。Location为我们学校的认证url
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508081912774.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
-**第三次**
-即使跳到了我们学校，还是带着之前的一系列认证的参数。
-return **这里最重要的东西Cookies出现了，有了Cookies，然后的打卡就不成为问题。**
-Location 还是我们学校另外一个链接
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508083119124.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
-**直接复制上面的认证url，用代码去请求不会报错，但是拿到Cookies之后，想去Post打卡的url会报错。**
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020050808395975.png)
-**直接复制相应的Cookies去POST打开，也会出现同样的错误。**
-#  在参考他人的时候发现了易班其他的api
+#  登录
 
 ```python
-url = 'https://mobile.yiban.cn/api/v2/passport/login?v=9.9.9&ct=99&account=' + urllib.request.quote(username) + '&passwd=' + urllib.request.quote(password)
+https://mobile.yiban.cn/api/v2/passport/login?v=9.9.9&ct=99&account=&passwd=
 ```
-**居然是明文的，还是get请求，请求成功之后，然后访问web_accesstoken_login_url**
+
+**居然是明文的，还是get请求，请求成功之后，获取access_token**
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508085327598.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
-得到与APP相似的yibanM_user_token和yiban_user_token(多次访问都没有变化)但是没有Location，无法跳到我们学校的认证的url，也就无法获得相应的Cookies。不过下面的CNZZDA。。。和_cnzz_CV1253488264分别有易班的一个url和我们学校的url（进行urlDecode得到），这个我们学校的url不是认证的，而是我们学校提供给我们全体学校学生手机坏掉的时候，可以进行web进行打卡，这里已经实现了代码实现web的打开，但我们还是更希望自己破解APP的流程。
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508085941462.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
-#  反编译APP
-[参考文章](https://blog.csdn.net/u010782846/article/details/79765866)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508092741677.png)
-**classes.dex有9m，jar只有16k，很明显App是加密的，而且里面的源码只有几个类**
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508092758142.png)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508092947507.png)
+#  在APP主页面获取疫情防控入口链接
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200515075117147.png)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200515075210303.png)
+#  请求疫情防控的链接
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200515075435950.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
+#  获取跳转Location
+![在这里插入图片描述](https://img-blog.csdnimg.cn/2020051507550033.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
+#  认证
+还是易班的Host，其他都没变化。
+act=iapp603148（我们学校在易班的编号）
+v=xxx(这是我们登录成功后的access_token)
+
+Location为我们学校的认证url
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508081912774.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
+#  我们接着访问到学校认证url，然后获取到cookie
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508083119124.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
+#  打卡
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200511153720670.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
+#  id = xmid为固定值
+
+#  无法确定signature的设置，反编译APP获取源码查看代码
+#  APP脱壳
+
+#  使用[drizzleDumper](https://github.com/DrizzleRisk/drizzleDumper)在手机上执行linux命令进行app脱壳。
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513060634975.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
+#  复制到电脑后，使用[jadx](https://github.com/skylot/jadx)打开源码（用于搜索，jadx打开代码可能不全），用dex2jar把dex文件转为jar,再用[jarExplorer](http://dst.in.ua/jarexp/index.html?l)打开（用于查看，搜索较为缓慢）
+#  并且jarExplorer有三种decompilers方式
+![在这里插入图片描述](https://img-blog.csdnimg.cn/2020051423490551.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
+#  比较两个工具，很明显，左边有很多的代码无法获取
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513061247632.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
+#  找到设置signature的地方
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200514235116687.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
+#  查看工具DesUtils类
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513062230440.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
+#  确认加密为Base64(DES())，双重加密
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200515092425560.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwOTY1MTc3,size_16,color_FFFFFF,t_70)
+#  App版本待续未完，android7.0抓包，app某些动作无网，无法获得连续的信息，故搁置。
+
+#  web版本（学校提供web版本打卡）
+#  加入定时器，到点自动打卡，发送email到邮箱。
+```python
+# -*- coding: utf-8 -*-
+import requests
+import smtplib
+from email.mime.text import MIMEText
+import datetime
+
+from apscheduler.schedulers.blocking import BlockingScheduler
+# 电脑打卡
+class PCPostYiBan:
+    def __init__(self, username: int, mail_address):
+        self.mail_address = mail_address
+        self.username = username
+        self.cookies = {}
+        self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36'}
+        self.id = ''
+        self.session = requests.session()
+        self.message = ''
+
+    def pc_login(self):
+        try:
+            url = 'http://yq.gdupt.edu.cn/login/Login.htm'
+            data = {'username': self.username, 'password': 'abc123!'}
+            self.session.post(url=url, data=data, headers=self.headers)
+            content = self.session.post(url='http://yq.gdupt.edu.cn/syt/zzapply/queryxmqks.htm?type=yqsjsb', data={'pageIndex': 0, 'pageSize': 20})
+            if content.status_code == 200:
+                self.id = eval(str(content.text).replace('null', '0').replace('true', '1').replace('false', '0'))['data'][0]['id']
+                # print(self.id)
+                self.daily_post()
+            else:
+                self.message = '登录失败'
+                print('登录失败')
+        except Exception as e:
+            self.message = '出现错误，请报告给开发者'+str(e)
+            self.sendMail(self.message, self.mail_address)
+
+    def daily_post(self):
+        try:
+            r = self.session.post(url='http://yq.gdupt.edu.cn/syt/zzapply/operation.htm', data={'data': '''{"xmqkb":{"id":"ff8080817056f727017057083b010001"},"pdnf":"2020","type":"yqsjsb","c5":"36-37.2°C","c6":"健康","c7":"健康","c8":"否","c9":"","c2":"","c3":"","c10":"","c11":"","c12":"","c1":"否","c4":""}''',
+    'msgUrl': '''syt/zzglappro/index.htm?type=yqsjsb&xmid=ff8080817056f727017057083b010001'''})
+            print(r.status_code)
+            if r.text == 'success':
+                self.message = '打卡成功'
+                self.sendMail(self.message, self.mail_address)
+                print('打卡成功')
+                # if scheduler.get_job(job_id='test2'):
+                #     scheduler.remove_job(job_id='test2')
+            else:
+                print('打卡不成功，请查看是否已打卡。')
+                #  打卡不成功
+                # scheduler.add_job(myyiban.daily_post, 'interval', minute=45, id='test2')
+        except Exception as e:
+            self.message = '出现错误，请报告给开发者'+str(e)
+            self.sendMail(self.message, self.mail_address)
+
+    def check_post(self):
+        data = {'xmid': self.id, 'pdnf': 2020}
+        r = self.session.post(url='http://yq.gdupt.edu.cn/syt/zzapply/checkrestrict.htm', data=data)
+        print(r.text)
+
+    # def getInfo(self):
+    #     r = requests.get(url='http://yq.gdupt.edu.cn/syt/student/getById.htm', cookies=self.cookies, headers=self.headers)
+    #     print(r.status_code)
+    #     print(r.text)
+    def sendMail(self, message:str, mail_address:str):
+        from_addr = '****@163.com'
+        password = 'RRSFPYLJOFPMXANX'
+
+        # 收信方邮箱
+        to_addr = mail_address
+
+        # 发信服务器
+        smtp_server = 'smtp.163.com'
+
+        mail_msg = """人生苦短，我用python.打卡时间：{}""".format(str(datetime.datetime.now())[:19])
+        # 邮箱正文内容，第一个参数为内容，第二个参数为格式(plain 为纯文本)，第三个参数为编码
+        msg = MIMEText(mail_msg, 'html', 'utf-8')
+
+        # 邮件头信息
+        msg['From'] = '***@163.com'
+        msg['To'] = '***qq.com'
+        msg['Subject'] = '{},{}'.format(str(datetime.datetime.now())[5:10], message)
+        # msg['Subject'] = Header('计算机17-1 37 谢卓亨 实验结果验收', 'utf-8')
+
+        # 开启发信服务，这里使用的是加密传输
+        server = smtplib.SMTP_SSL()
+        server.connect(smtp_server, 465)
+        # 登录发信邮箱
+        server.login(from_addr, password)
+        # 发送邮件
+        server.sendmail(from_addr, to_addr, msg.as_string())
+
+def post_all():
+    information = {
+    #   学号： ‘邮箱’
+        *****: '***@qq.com',
+    }
+    for number, mail_address in information.items():
+        personal = PCPostYiBan(number, mail_address)
+        personal.pc_login()
+        # personal.check_post()
+
+
+if __name__ == '__main__':
+    scheduler = BlockingScheduler()
+    scheduler.add_job(post_all, 'cron', hour=12, minute=0, id='one')
+    # print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
+
+    scheduler.start()
+    # scheduler.
+```
+
+
+
