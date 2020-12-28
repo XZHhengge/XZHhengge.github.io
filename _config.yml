@@ -17,13 +17,12 @@ permalink: /:year/:month/:day/:title/
 twitter_username: None
 facebook_username: None
 github_username:  XZHhengge
-email: 13035822385@163.com
+email: henggeshine@foxmail.com
 weibo_username: 灰的月色
-zhihu_username: lonely光辉
 linkedIn_username: XZHhengge
 dribbble_username:
 
-description_footer: 最大的乐趣在于寻找新的知识
+description_footer: 我的最大的乐趣在于寻找新的知识
 
 # comments
 # two ways to comment, only choose one, and use your own short name
@@ -35,8 +34,8 @@ disqus_shortname: XZHhengge
 # 百度统计 id，将统计代码替换为自己的百度统计id，即
 # hm.src = "//hm.baidu.com/hm.js?xxxxxxxxxxxx";
 # xxxxx字符串
-baidu_tongji_id: cf8506e0ef223e57ff6239944e5d46a4
-google_analytics_id: UA-72449510-4 # google 分析追踪id
+baidu_tongji_id: 24f4aa9e64e6f06d3a57fe246ffae136
+#google_analytics_id: UA-72449510-4 # google 分析追踪id
 
 # Build settings
 markdown: kramdown
